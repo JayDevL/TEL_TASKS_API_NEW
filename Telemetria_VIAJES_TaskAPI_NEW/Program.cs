@@ -26,9 +26,9 @@ namespace Telemetria_VIAJES_TaskAPI_NEW
         static string urlApi = "https://hst-api.wialon.com/wialon/ajax.html?";
         static string TKN = "11e68802040b6eab269a470d3cb79ca04C10C149B979CC7F35AC644BCC5C938F1B126F1A";
 
-        static string connectionString = "Server=localhost;Database=BICYR_TEL;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+        //static string connectionString = "Server=localhost;Database=BICYR_TEL;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
 
-        //public static string connectionString = "Server=10.15.27.18;Database=BICYR_TEL;User Id=User;Password=Xalapa2011;TrustServerCertificate=True";
+        public static string connectionString = "Server=10.15.27.18;Database=BICYR_TEL;User Id=User;Password=Xalapa2011;TrustServerCertificate=True";
 
         static string SID = "NO_SESSION";
 
@@ -36,9 +36,9 @@ namespace Telemetria_VIAJES_TaskAPI_NEW
 
         static string TipoIntervalosFechas = "";
 
-        static bool IntervaloFechasPersonalizado = true;
+        static bool IntervaloFechasPersonalizado = false;
 
-        static FromTo_Local_Date DateUnix_Local = new FromTo_Local_Date(1788242400, 1789970399);
+        static FromTo_Local_Date DateUnix_Local = new FromTo_Local_Date(1793858400, 1793944799);
 
 
         // --------------------- PERSONALIZACION DE FECHAS --------------------- //
@@ -81,7 +81,6 @@ namespace Telemetria_VIAJES_TaskAPI_NEW
                 this.From_Local = from;
                 this.To_Local = to;
             }
-
         }
 
         //---- INICIO DE PORGRAMA ------------------
@@ -1147,6 +1146,7 @@ namespace Telemetria_VIAJES_TaskAPI_NEW
 
                             Viajes_Row.Nombre_Model = NombreEconomicoSalida(vector[1]?.ToString() ?? "NO_NAME");
 
+                            //FORMATO STRING O FORMATO JSON EN COMIENZO 
                             if (vector[2] is JsonObject)
                             {
                                 Viajes_Row.Fecha_Inicial_Model = FechasyHorasParts(vector[2]?["t"]?.ToString() ?? "0 0")[0];
@@ -1181,9 +1181,35 @@ namespace Telemetria_VIAJES_TaskAPI_NEW
 
                             Viajes_Row.Duracion_Punto_Final_Model = vector[8]?.ToString() ?? "Duracion_PuntoFinal";
 
-                            Viajes_Row.Kilometraje_Model = vector[9]?.ToString().Split(' ')[0] ?? "Kilometraje";
-                            Viajes_Row.Kilometraje_Inicial_Model = vector[10]?.ToString().Split(' ')[0] ?? "Kilometraje_Inicial";
-                            Viajes_Row.Kilometraje_Final_Model = vector[11]?.ToString().Split(' ')[0] ?? "Kilometraje_Final";
+                            //KILOMETRAJE GENERAL
+                            if (vector[9]?.ToString() == "-----" || string.IsNullOrEmpty(vector[9]?.ToString()))
+                            {
+                                Viajes_Row.Kilometraje_Model = "0";
+                            }
+                            else
+                            {
+                                Viajes_Row.Kilometraje_Model = vector[9]?.ToString().Split(' ')[0] ?? "Kilometraje";
+                            }
+
+                            //KILOMETRAJE INICIAL
+                            if (vector[10]?.ToString() == "-----" || string.IsNullOrEmpty(vector[10]?.ToString()))
+                            {
+                                Viajes_Row.Kilometraje_Inicial_Model = "0";
+                            }
+                            else
+                            {
+                                Viajes_Row.Kilometraje_Inicial_Model = vector[10]?.ToString().Split(' ')[0] ?? "Kilometraje_Inicial";
+                            }
+
+                            //KILOMETRAJE FINAL
+                            if (vector[11]?.ToString() == "-----" || string.IsNullOrEmpty(vector[11]?.ToString()))
+                            {
+                                Viajes_Row.Kilometraje_Final_Model = "0";
+                            }
+                            else
+                            {
+                                Viajes_Row.Kilometraje_Final_Model = vector[11]?.ToString().Split(' ')[0] ?? "Kilometraje_Final";
+                            }
 
                             //Vel_MAX
                             if (vector[12] is JsonObject)
@@ -1241,7 +1267,14 @@ namespace Telemetria_VIAJES_TaskAPI_NEW
                                 Viajes_Row.Temp_Max_Model = vector[16]?.ToString().Split(' ')[0] ?? "0";
                             }
 
-                            Viajes_Row.Consumo_FLS_Model = vector[17]?.ToString().Split(' ')[0] ?? "Combustible_Cons";
+                            if (vector[17]?.ToString() == "-----" || string.IsNullOrEmpty(vector[17]?.ToString()))
+                            {
+                                Viajes_Row.Consumo_FLS_Model = "0";
+                            }
+                            else
+                            {
+                                Viajes_Row.Consumo_FLS_Model = vector[17]?.ToString().Split(' ')[0] ?? "Combustible_Cons";
+                            }
 
                             Viajes_Row.Consumo_ralenti_ABSF = vector[18]?.ToString().Split(' ')[0] ?? "Consumido por AbsFCS";
 
